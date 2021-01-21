@@ -27,15 +27,15 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
+function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.25 }) {
   const [board, setBoard] = useState(createBoard);
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
     let initialBoard = [];
-    for (let row = 0;row < nrows;row++) {
+    for (let row = 0; row < nrows; row++) {
       let tempRow = [];
-      for (let col = 0;col < ncols;col++) {
+      for (let col = 0; col < ncols; col++) {
         let rand = Math.random();
         tempRow.push(rand < chanceLightStartsOn);
       }
@@ -62,19 +62,16 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
 
       const oldBoardCopy = oldBoard.map(row => [...row]);
 
-      const cellsToFlip = [[y, x], [y + 1, x], [y - 1, x], [y, x + 1], [y, x - 1]];
-      // TODO: merge above and below remove loop and array of arrays
-      for (let cell of cellsToFlip) {
-        flipCell(cell[0], cell[1], oldBoardCopy);
-      }
+      // Flip cell clicked and one above, below, right, and left
+      flipCell(y, x, oldBoardCopy);
+      flipCell(y + 1, x, oldBoardCopy);
+      flipCell(y - 1, x, oldBoardCopy);
+      flipCell(y, x + 1, oldBoardCopy);
+      flipCell(y, x - 1, oldBoardCopy);
+
       return oldBoardCopy;
     });
   }
-
-  // TODO do mapping out of return - keep return simple
-  // if (hasWon) {
-  //   // return div saying we won
-  // }
 
   function fillBoard() {
     let allRows = [];
@@ -86,7 +83,7 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
           id={`${row}-${col}`}
           key={`${row}-${col}`} />);
       }
-      allRows.push(tempRow);
+      allRows.push(<tr key={row}>{tempRow}</tr>);
     }
     return allRows;
   }
@@ -95,29 +92,15 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
     return (
       <div>You win!</div>
     )
-  } else {
-    return (
-      <table>
-        <tbody>
-          {fillBoard()}
-        </tbody>
-      </table>
-    )
   }
-
-  // return (
-  //   <table className="Board">
-  //     <tbody>
-  //       { hasWon()
-  //         ? 'You won!'
-  //         : board.map((row, y) => {
-  //           return (
-  //             <tr>{row.map((val, x) => <Cell isLit={val} flipCellsAroundMe={flipCellsAround} id={`${y}-${x}`} key={`${x}`} />)}</tr>)
-  //         })}
-  //     </tbody>
-  //   </table>
-  // )
-
+  
+  return (
+    <table className="Board">
+      <tbody className="Board-body">
+        {fillBoard()}
+      </tbody>
+    </table>
+  )
 
 }
 

@@ -16,9 +16,10 @@ import "./Cell.css";
  *
  **/
 
-function Cell({ flipCellsAroundMe, isLit, id }) {
-  console.log('entered cell component');
+function Cell({ flipCellsAroundMe, isLit=false, id }) {
+  
   const classes = `Cell ${isLit ? "Cell-lit" : ""}`;
+  
   function handleClick(evt) {
     flipCellsAroundMe(id);
   }

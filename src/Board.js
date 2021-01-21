@@ -28,7 +28,7 @@ import "./Board.css";
  **/
 
 function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
-  const [board, setBoard] = useState(createBoard());
+  const [board, setBoard] = useState(createBoard);
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
@@ -37,11 +37,10 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
       let tempRow = [];
       for (let col = 0;col < ncols;col++) {
         let rand = Math.random();
-        rand < chanceLightStartsOn ? tempRow.push(true) : tempRow.push(false);
+        tempRow.push(rand < chanceLightStartsOn);
       }
       initialBoard.push(tempRow);
     }
-    console.log(initialBoard);
     return initialBoard;
   }
 
@@ -64,6 +63,7 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
       const oldBoardCopy = oldBoard.map(row => [...row]);
 
       const cellsToFlip = [[y, x], [y + 1, x], [y - 1, x], [y, x + 1], [y, x - 1]];
+      // TODO: merge above and below remove loop and array of arrays
       for (let cell of cellsToFlip) {
         flipCell(cell[0], cell[1], oldBoardCopy);
       }
@@ -71,18 +71,52 @@ function Board({ nrows=5, ncols=5, chanceLightStartsOn=0.25 }) {
     });
   }
 
-  return (
-    <table className="Board">
-      <tbody>
-        { hasWon()
-          ? 'You won!'
-          : board.map((row, y) => {
-            return (
-              <tr>{row.map((val, x) => <Cell isLit={val} flipCellsAroundMe={flipCellsAround} id={`${y}-${x}`} />)}</tr>)
-          })}
-      </tbody>
-    </table>
-  )
+  // TODO do mapping out of return - keep return simple
+  // if (hasWon) {
+  //   // return div saying we won
+  // }
+
+  function fillBoard() {
+    let allRows = [];
+    for (let row = 0; row < nrows; row++) {
+      let tempRow = [];
+      for (let col = 0; col < ncols; col++) {
+        tempRow.push(<Cell isLit={board[row][col]}
+          flipCellsAroundMe={flipCellsAround}
+          id={`${row}-${col}`}
+          key={`${row}-${col}`} />);
+      }
+      allRows.push(tempRow);
+    }
+    return allRows;
+  }
+
+  if (hasWon()) {
+    return (
+      <div>You win!</div>
+    )
+  } else {
+    return (
+      <table>
+        <tbody>
+          {fillBoard()}
+        </tbody>
+      </table>
+    )
+  }
+
+  // return (
+  //   <table className="Board">
+  //     <tbody>
+  //       { hasWon()
+  //         ? 'You won!'
+  //         : board.map((row, y) => {
+  //           return (
+  //             <tr>{row.map((val, x) => <Cell isLit={val} flipCellsAroundMe={flipCellsAround} id={`${y}-${x}`} key={`${x}`} />)}</tr>)
+  //         })}
+  //     </tbody>
+  //   </table>
+  // )
 
 
 }
